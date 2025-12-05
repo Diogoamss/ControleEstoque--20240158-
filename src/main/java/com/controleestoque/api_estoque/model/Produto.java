@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "tb_produtos")
@@ -18,10 +20,12 @@ public class Produto {
     private BigDecimal preco;
     
     @OneToOne(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("produto-estoque")
     private Estoque estoque;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable= false)
+    @JsonBackReference("categoria-produto")
     private Categoria categoria;
 
     @ManyToMany
@@ -30,6 +34,7 @@ public class Produto {
         joinColumns = @JoinColumn(name = "produto_id"),
         inverseJoinColumns= @JoinColumn(name = "fornecedor_id")
     )
+    @JsonManagedReference("produto-fornecedor")
     private Set<Fornecedor> fornecedores;
 
 

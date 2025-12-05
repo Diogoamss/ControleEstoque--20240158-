@@ -8,9 +8,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "tb_estoques")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Estoque {
 
     @Id
@@ -21,19 +28,11 @@ public class Estoque {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "produto_id", nullable = false )
+    @JsonBackReference("produto-estoque")
     private Produto produto;
-
-    public Estoque() {}
     
     public Estoque(Integer quantidade, Produto produto) {
         this.quantidade = quantidade;
         this.produto = produto;
     }
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public Integer getQuantidade() { return quantidade; }
-    public void setQuantidade(Integer quantidade) { this.quantidade = quantidade; }
-    public Produto getProduto() { return produto; }
-    public void setProduto(Produto produto) { this.produto = produto; }
 }

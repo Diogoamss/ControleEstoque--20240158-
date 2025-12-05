@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
+import com.controleestoque.api_estoque.dto.FornecedorCreateDto;
 
 import com.controleestoque.api_estoque.model.Fornecedor;
 import com.controleestoque.api_estoque.repository.FornecedorRepository;
@@ -29,9 +31,11 @@ public class FornecedorController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public Fornecedor criarFornecedor(@RequestBody Fornecedor fornecedor){
+    public Fornecedor criarFornecedor(@Valid @RequestBody FornecedorCreateDto fornecedorDto){
+        Fornecedor fornecedor = new Fornecedor();
+        fornecedor.setNome(fornecedorDto.getNome());
         return fornecedorRepository.save(fornecedor);
     }
 

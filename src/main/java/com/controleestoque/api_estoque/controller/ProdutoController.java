@@ -6,9 +6,12 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import com.controleestoque.api_estoque.model.Produto;
+import com.controleestoque.api_estoque.model.Estoque;
 import com.controleestoque.api_estoque.repository.ProdutoRepository;
 import com.controleestoque.api_estoque.repository.CategoriaRepository;
 import com.controleestoque.api_estoque.repository.FornecedorRepository;
+import com.controleestoque.api_estoque.repository.EstoqueRepository;
+import com.controleestoque.api_estoque.dto.ProdutoCreateDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +23,7 @@ public class ProdutoController {
     private final ProdutoRepository produtoRepository;
     private final CategoriaRepository categoriaRepository;
     private final FornecedorRepository fornecedorRepository;
+    private final EstoqueRepository estoqueRepository;
 
     @GetMapping
     public List<Produto> getAllProdutos(){
@@ -35,34 +39,66 @@ public class ProdutoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Produto> createProduto(@RequestBody Produto produto){
-        if (produto.getCategoria() == null || produto.getCategoria().getId() == 0){
+    public ResponseEntity<Produto> createProduto(@RequestBody ProdutoCreateDto dto){
+        // Validar entrada
+        if (dto.getNome() == null || dto.getNome().trim().isEmpty() || 
+            dto.getPreco() == null || dto.getCategoriaId() == null || 
+            dto.getCategoriaId() == 0L) {
             return ResponseEntity.badRequest().build();
         }
-        categoriaRepository.findById(produto.getCategoria().getId())
-                .ifPresent(produto::setCategoria);
-        
-        if(produto.getFornecedores() != null && !produto.getFornecedores().isEmpty()){
-            produto.getFornecedores().clear();
+
+        // Buscar e validar categoria
+        com.controleestoque.api_estoque.model.Categoria categoria = 
+            categoriaRepository.findById(dto.getCategoriaId()).orElse(null);
+        if (categoria == null) {
+            return ResponseEntity.badRequest().build();
         }
 
-        if(produto.getFornecedores() != null) {
-            produto.getFornecedores().forEach(fornecedor -> {
-                fornecedorRepository.findById(fornecedor.getId())
-                    .ifPresent(produto.getFornecedores()::add);
+        // Criar produto
+        Produto produto = new Produto();
+        produto.setNome(dto.getNome());
+        produto.setPreco(dto.getPreco());
+        produto.setCategoria(categoria);
+
+        // Resolver fornecedores
+        if (dto.getFornecedorIds() != null && !dto.getFornecedorIds().isEmpty()) {
+            java.util.Set<com.controleestoque.api_estoque.model.Fornecedor> fornecedores = new java.util.HashSet<>();
+            dto.getFornecedorIds().forEach(fornecedorId -> {
+                fornecedorRepository.findById(fornecedorId).ifPresent(fornecedores::add);
             });
+            produto.setFornecedores(fornecedores);
         }
 
+        // Salvar produto
         Produto savedProduto = produtoRepository.save(produto);
+
+        // Criar estoque se quantidade foi fornecida
+        if (dto.getEstoqueQuantidade() != null && dto.getEstoqueQuantidade() > 0) {
+            com.controleestoque.api_estoque.model.Estoque estoque = new com.controleestoque.api_estoque.model.Estoque();
+            estoque.setQuantidade(dto.getEstoqueQuantidade());
+            // Reload produto from DB to ensure it's fully managed
+            Produto managedProduto = produtoRepository.findById(savedProduto.getId()).orElse(savedProduto);
+            estoque.setProduto(managedProduto);
+            estoqueRepository.save(estoque);
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Produto> updateProduto(@PathVariable Long id, @RequestBody Produto produtoDetails){
+    public ResponseEntity<Produto> updateProduto(@PathVariable Long id, @RequestBody ProdutoCreateDto dto){
         return produtoRepository.findById(id)
             .map(produto -> {
-                produto.setNome(produtoDetails.getNome());
-                produto.setPreco(produtoDetails.getPreco());
+                if (dto.getNome() != null && !dto.getNome().trim().isEmpty()) {
+                    produto.setNome(dto.getNome());
+                }
+                if (dto.getPreco() != null) {
+                    produto.setPreco(dto.getPreco());
+                }
+                if (dto.getCategoriaId() != null && dto.getCategoriaId() > 0) {
+                    categoriaRepository.findById(dto.getCategoriaId())
+                        .ifPresent(produto::setCategoria);
+                }
                 Produto updatedProduto = produtoRepository.save(produto);
                 return ResponseEntity.ok(updatedProduto);
             })

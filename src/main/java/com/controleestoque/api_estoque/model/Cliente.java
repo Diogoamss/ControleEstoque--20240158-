@@ -1,6 +1,7 @@
 package com.controleestoque.api_estoque.model;
 
 import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.List;
 
 @Entity
@@ -16,6 +17,7 @@ public class Cliente {
     private String email;
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+    @JsonManagedReference("cliente-venda")
     private List<Venda> vendas;
 
     public Cliente() {}

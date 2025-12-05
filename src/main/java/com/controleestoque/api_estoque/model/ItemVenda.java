@@ -1,6 +1,7 @@
 package com.controleestoque.api_estoque.model;
 
 import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.math.BigDecimal;
 
 @Entity
@@ -13,6 +14,7 @@ public class ItemVenda {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "venda_id", nullable = false)
+    @JsonBackReference("venda-item")
     private Venda venda;
 
     @ManyToOne(fetch = FetchType.EAGER)

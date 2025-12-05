@@ -2,6 +2,7 @@ package com.controleestoque.api_estoque.model;
 
 import javax.persistence.*;
 import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "tb_fornecedores")
@@ -13,6 +14,7 @@ public class Fornecedor {
     private String nome;
 
     @ManyToMany(mappedBy = "fornecedores")
+    @JsonBackReference("produto-fornecedor")
     private Set<Produto> produtos;
 
     public Fornecedor(){}

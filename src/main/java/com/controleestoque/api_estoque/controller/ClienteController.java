@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
 import com.controleestoque.api_estoque.model.Cliente;
 import com.controleestoque.api_estoque.repository.ClienteRepository;
@@ -29,9 +30,9 @@ public class ClienteController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public Cliente createCliente(@RequestBody Cliente cliente){
+    public Cliente createCliente(@Valid @RequestBody Cliente cliente){
         return clienteRepository.save(cliente);
     }
 

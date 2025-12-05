@@ -1,6 +1,8 @@
 package com.controleestoque.api_estoque.model;
 
 import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -15,6 +17,7 @@ public class Venda {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
+    @JsonBackReference("cliente-venda")
     private Cliente cliente;
 
     private LocalDateTime data;
@@ -22,6 +25,7 @@ public class Venda {
     private BigDecimal total;
 
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("venda-item")
     private Set<ItemVenda> itens;
 
     public Venda() {
