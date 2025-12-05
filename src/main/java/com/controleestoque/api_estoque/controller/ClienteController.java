@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import com.controleestoque.api_estoque.dto.ClienteCreateDto;
+import com.controleestoque.api_estoque.model.Cliente;
 
 import com.controleestoque.api_estoque.model.Cliente;
 import com.controleestoque.api_estoque.repository.ClienteRepository;
@@ -32,7 +34,10 @@ public class ClienteController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public Cliente createCliente(@Valid @RequestBody Cliente cliente){
+    public Cliente createCliente(@Valid @RequestBody ClienteCreateDto dto){
+        Cliente cliente = new Cliente();
+        cliente.setNome(dto.getNome());
+        cliente.setEmail(dto.getEmail());
         return clienteRepository.save(cliente);
     }
 
