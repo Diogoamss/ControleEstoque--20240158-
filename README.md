@@ -1,5 +1,12 @@
+# VIDEO EM BAIXA RESOLUÇÃO DEVIDO AO LIMITE DO GIT HUB - 
 
 https://github.com/user-attachments/assets/a39d8294-a379-40e2-a96b-c4950007f244
+
+# ASSISTA A VERSÃO DESCOMPRIMIDA CLICANDO NO LINK ABAIXO
+
+## https://youtu.be/wE1IVX_oLf8
+
+---
 
 # API Estoque - 
 
