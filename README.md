@@ -1,4 +1,9 @@
-# API Estoque - Controle de Estoque
+
+https://github.com/user-attachments/assets/a39d8294-a379-40e2-a96b-c4950007f244
+
+# API Estoque - 
+
+Controle de Estoque
 
 API REST em Spring Boot 2.7.18 para gerenciar estoque, produtos, clientes, fornecedores, categorias e vendas.
 
