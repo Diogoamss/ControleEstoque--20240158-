@@ -664,18 +664,6 @@ src/main/resources/
 - **Deduções de Estoque**: Ao criar uma venda, o estoque é automaticamente deduzido. Se o estoque for insuficiente, a venda falha com erro 409.
 - **Validação em Cascata**: DTOs com `@Valid` garantem validação dos dados de entrada antes de processar.
 
----
-
-## Melhorias Futuras Recomendadas
-
-1. Adicionar **otimistic locking** (campo `@Version`) em `Estoque` para evitar race conditions
-2. Implementar **testes unitários e de integração** com MockMvc
-3. Adicionar **autenticação e autorização** (JWT/OAuth)
-4. Implementar **paginação** em endpoints GET (findAll)
-5. Adicionar **logging estruturado** com SLF4J
-6. Criar **endpoints de relatório** (vendas por período, estoque baixo, etc.)
-7. Implementar **soft delete** para dados sensíveis
-8. Adicionar **cache** com Spring Cache para consultas frequentes
 
 ---
 

@@ -1,12 +1,12 @@
 package com.controleestoque.api_estoque.model;
 
 import javax.persistence.*;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 
 @Entity
 @Table(name = "tb_categorias")
-public class Categoria {
+public class Categoria extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -15,7 +15,7 @@ public class Categoria {
     private String nome;
 
     @OneToMany(mappedBy= "categoria", cascade = CascadeType.ALL)
-    @JsonManagedReference("categoria-produto")
+    @JsonIgnore
     private List<Produto> produtos;
 
     public Categoria(){}

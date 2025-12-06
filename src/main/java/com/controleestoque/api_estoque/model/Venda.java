@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tb_vendas")
-public class Venda {
+public class Venda extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

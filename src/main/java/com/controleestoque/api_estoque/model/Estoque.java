@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Estoque {
+public class Estoque extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

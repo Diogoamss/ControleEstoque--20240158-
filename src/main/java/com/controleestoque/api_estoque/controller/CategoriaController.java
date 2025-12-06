@@ -1,12 +1,14 @@
 package com.controleestoque.api_estoque.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import com.controleestoque.api_estoque.model.Categoria;
 import com.controleestoque.api_estoque.repository.CategoriaRepository;
+import com.controleestoque.api_estoque.service.IdReusableService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class CategoriaController {
     
     private final CategoriaRepository categoriaRepository;
+    private final IdReusableService idReusableService;
 
     @GetMapping
     public List<Categoria> getAllCategorias(){
@@ -29,9 +32,20 @@ public class CategoriaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public Categoria createCategoria(@RequestBody Categoria categoria){
+        // Tentar reutilizar ID deletado
+        Optional<Long> reuseId = idReusableService.getNextAvailableId("categoria");
+        if (reuseId.isPresent()) {
+            Long idToReuse = reuseId.get();
+            categoria.setId(idToReuse);
+            categoria.setAtivo(true);
+            categoria.setNome(categoria.getNome() != null ? categoria.getNome() : "");
+            return categoriaRepository.save(categoria);
+        }
+        // Senão, deixar o banco gerar novo ID (não setar ID)
+        categoria.setAtivo(true);
         return categoriaRepository.save(categoria);
     }
 
@@ -51,7 +65,10 @@ public class CategoriaController {
         if(!categoriaRepository.existsById(id)){
             return ResponseEntity.notFound().build();
         }
-        categoriaRepository.deleteById(id);
+        categoriaRepository.findById(id).ifPresent(categoria -> {
+            categoria.setAtivo(false);
+            categoriaRepository.save(categoria);
+        });
         return ResponseEntity.noContent().build();
     }
 

@@ -58,7 +58,10 @@ public class ClienteController {
         if(!clienteRepository.existsById(id)){
             return ResponseEntity.notFound().build();
         }
-        clienteRepository.deleteById(id);
+        clienteRepository.findById(id).ifPresent(cliente -> {
+            cliente.setAtivo(false);
+            clienteRepository.save(cliente);
+        });
         return ResponseEntity.noContent().build();
     }
 

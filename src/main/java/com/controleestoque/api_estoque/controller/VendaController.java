@@ -162,7 +162,10 @@ public class VendaController {
         if(!vendaRepository.existsById(id)){
             return ResponseEntity.notFound().build();
         }
-        vendaRepository.deleteById(id);
+        vendaRepository.findById(id).ifPresent(venda -> {
+            venda.setAtivo(false);
+            vendaRepository.save(venda);
+        });
         return ResponseEntity.noContent().build();
     }
 

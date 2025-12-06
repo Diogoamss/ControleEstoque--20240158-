@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "tb_itens_vendas")
-public class ItemVenda {
+@Table(name = "tb_itens_venda")
+public class ItemVenda extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

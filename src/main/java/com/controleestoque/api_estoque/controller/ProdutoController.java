@@ -37,7 +37,7 @@ public class ProdutoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Produto> createProduto(@RequestBody ProdutoCreateDto dto){
         // Validar entrada
@@ -110,7 +110,10 @@ public class ProdutoController {
         if (!produtoRepository.existsById(id)){
             return ResponseEntity.notFound().build();
         }
-        produtoRepository.deleteById(id);
+        produtoRepository.findById(id).ifPresent(produto -> {
+            produto.setAtivo(false);
+            produtoRepository.save(produto);
+        });
         return ResponseEntity.noContent().build();
     }
 }

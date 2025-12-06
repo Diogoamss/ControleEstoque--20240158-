@@ -56,7 +56,10 @@ public class FornecedorController {
         if (!fornecedorRepository.existsById(id)){
             return ResponseEntity.notFound().build();
         }
-        fornecedorRepository.deleteById(id);
+        fornecedorRepository.findById(id).ifPresent(fornecedor -> {
+            fornecedor.setAtivo(false);
+            fornecedorRepository.save(fornecedor);
+        });
         return ResponseEntity.noContent().build();
     }
 }
